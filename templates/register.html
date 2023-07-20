@@ -1,0 +1,26 @@
+<!-- templates/register.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>Welcome to The Lifelong Learning Center!</h1>
+        <!-- More content here -->
+    </div>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.username.label }}<br>
+        {{ form.username(size=32) }}
+    </div>
+    <div>
+        {{ form.birthday.label }}<br>
+        {{ form.birthday(size=32) }}
+    </div>
+    <div>
+        {{ form.address.label }}<br>
+        {{ form.address(size=64) }}
+    </div>
+    <div>{{ form.submit() }}</div>
+</form>
+{% endblock %}

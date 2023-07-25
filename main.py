@@ -6,11 +6,23 @@ from datetime import date
 from flask import Flask
 from db import ScopedSession
 from routes import set_up_routes
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
+from flask import request
+from models import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = b'\xd4\xc5\xf2\xae\xaa\xb7\xc7\xd9}\xf3}\xebHG\xa4\x96'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///school.db'
 #db = SQLAlchemy(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return ScopedSession.query(User).get(int(user_id))
+
 
 @app.before_request
 def create_session():

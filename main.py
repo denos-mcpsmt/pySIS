@@ -1,24 +1,31 @@
+from flask_sqlalchemy import SQLAlchemy
+
 from db import get_db_session, Base
 from models.Student import Student
 from models.Class import Class
 from models.Instructor import Instructor
 from datetime import date
 from flask import Flask
-from db import ScopedSession
-from routes import set_up_routes
+from db import ScopedSession, get_db_session
+#from routes import set_up_routes
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from flask import request
 from models import User
+from flask_migrate import Migrate
+from routes import bp
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = b'\xd4\xc5\xf2\xae\xaa\xb7\xc7\xd9}\xf3}\xebHG\xa4\x96'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///school.db'
-#db = SQLAlchemy(app)
-
+app.register_blueprint(bp)
+db = get_db_session()
+bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+migrate = Migrate(app, ScopedSession())
 @login_manager.user_loader
 def load_user(user_id):
     return ScopedSession.query(User).get(int(user_id))
@@ -34,7 +41,7 @@ def shutdown_session(response_or_exc):
     ScopedSession.remove()
 
 
-set_up_routes(app)
+#set_up_routes(app)
 
 
 def main():

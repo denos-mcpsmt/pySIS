@@ -10,4 +10,5 @@ class User(UserMixin, Base):
 
     id = Column(Integer, primary_key=True)
     username = Column(String(64), unique=True)
+    email = Column(String(64), unique=True)
     password = Column(String(128))  # For simplicity, we are not hashing password here

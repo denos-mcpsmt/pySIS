@@ -1,13 +1,14 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 
 DATABASE_URL = "sqlite:///school.db"
 
 engine = create_engine(DATABASE_URL)
+metadata = MetaData()
+#categories = Table('categories', metadata, autoload_with=engine)
 session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 ScopedSession = scoped_session(session_factory)
-
 
 Base = declarative_base()
 

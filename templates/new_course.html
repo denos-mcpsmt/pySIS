@@ -20,6 +20,11 @@
                     </div>
                      <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Create A Course</h5>
                     <div class="form-outline mb-4">
+                        {{ form.categories.label(class="form-control-label") }}
+                        {{ form.categories(class="form-control form-control-lg") }}
+                    </div>
+
+                    <div class="form-outline mb-4">
                         {{ form.name.label(class="form-control-label") }}
                         {{ form.name(class="form-control form-control-lg") }}
                     </div>
@@ -29,7 +34,31 @@
                     </div>
                     <div class="form-outline mb-4">
                     {{ form.price.label(class="form-control-label") }}
-                    {{ form.price(class="form-control form-control-lg" name="price" step="0.01") }}
+                    {{ form.price(class="form-control form-control-lg", title="price", step="0.01") }}
+                    </div>
+                    <div class="form-outline mb-4">
+                    {{ form.start_date.label(class="form-control-label") }}
+                    {{ form.start_date(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-outline mb-4">
+                    {{ form.end_date.label(class="form-control-label") }}
+                    {{ form.end_date(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-outline mb-4">
+                    {{ form.start_time.label(class="form-control-label") }}
+                    {{ form.start_time(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-outline mb-4">
+                    {{ form.end_time.label(class="form-control-label") }}
+                    {{ form.end_time(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-outline mb-4">
+                    {{ form.min_students.label(class="form-control-label") }}
+                    {{ form.min_students(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-outline mb-4">
+                    {{ form.max_students.label(class="form-control-label") }}
+                    {{ form.max_students(class="form-control form-control-lg") }}
                     </div>
                     <div class="form-outline mb-4">
                     {{ form.image.label(class="form-control-label") }}

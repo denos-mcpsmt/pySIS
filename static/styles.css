@@ -30,6 +30,9 @@ a:hover{
     text-decoration: none;
 }
 img{
+    padding: 20px;
+}
+img-sml{
     object-fit: contain;
     width: 35px;
     height: 35px;
@@ -74,4 +77,7 @@ b{
 }
 .pale-pista{
     background-color: #dbf6e9;
+}
+.list-group-item{
+    margin:1.12rem;
 }

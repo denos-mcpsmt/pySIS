@@ -7,7 +7,7 @@ class Class(Base):
     __tablename__ = 'classes'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    cost = Column(Float)
+    price = Column(Float)
     class_type = Column(String)
     length = Column(Integer)
     min_students = Column(Integer)

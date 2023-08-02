@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="container py-5">
-
+  <p>{{ category.name }}</p>
+  <a class="btn btn-primary" href="{{ url_for('routes.new_course',category_id=category.id) }}" role="button">Add a {{ category.name }} Class</a>
   <div class="row">
     <div class="col-lg-8 mx-auto">
-
       <!-- List group-->
       <ul class="list-group shadow">
         {% for course in courses %}
@@ -20,7 +20,9 @@
                 <div class="d-flex align-items-center justify-content-between mt-1">
                   <h6 class="font-weight-bold my-2">${{ course.price }}</h6>
                 </div>
-              </div><img src="https://bootstrapious.com/i/snippets/sn-cards/shoes-1_gthops.jpg" alt="Generic placeholder image" width="200" class="ml-lg-5 order-1 order-lg-2">
+               </div>
+              <a role="button" href="{{ url_for('routes.course_detail', course_id=course.id) }}" class="btn btn-primary">View Details</a>
+              <a role="button" href="{{ url_for('routes.enroll', course_id=course.id) }}" class="btn btn-primary">Enroll</a>
             </div>
             <!-- End -->
           </li>

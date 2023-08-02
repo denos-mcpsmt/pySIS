@@ -10,7 +10,7 @@ from db import ScopedSession, get_db_session
 #from routes import set_up_routes
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from flask import request
-from models import User
+from models.User import User
 from flask_migrate import Migrate
 from routes import bp
 from flask_bcrypt import Bcrypt
@@ -28,7 +28,8 @@ login_manager.login_view = 'login'
 migrate = Migrate(app, ScopedSession())
 @login_manager.user_loader
 def load_user(user_id):
-    return ScopedSession.query(User).get(int(user_id))
+    session = ScopedSession
+    return session.query(User).filter(User.id==int(user_id))
 
 
 @app.before_request

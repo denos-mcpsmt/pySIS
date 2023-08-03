@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Account Details</h2>
+  <p>Username: {{ current_user.username }}</p>
+  <p>Email: {{ current_user.email }}</p>
+  
+  <a href="{{ url_for('routes.edit_account') }}">Edit details</a>
+  <a href="{{ url_for('routes.user_courses') }}">View my courses</a>
+{% endblock %}

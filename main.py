@@ -1,9 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
 from db import get_db_session, Base
-from models.Student import Student
-from models.Class import Class
-from models.Instructor import Instructor
 from datetime import date
 from flask import Flask
 from db import ScopedSession, get_db_session
@@ -23,13 +20,13 @@ db = get_db_session()
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'routes.login'
 
 migrate = Migrate(app, ScopedSession())
 @login_manager.user_loader
 def load_user(user_id):
     session = ScopedSession
-    return session.query(User).filter(User.id==int(user_id))
+    return session.query(User).filter(User.id==int(user_id)).first()
 
 
 @app.before_request

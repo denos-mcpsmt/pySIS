@@ -1,8 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm, CourseForm, CategoryForm
+from forms import RegistrationForm, LoginForm, CourseForm, CategoryForm, UserUpdateForm
 from flask_sqlalchemy import SQLAlchemy
-from models.Student import Student
-from models.User import User
+from models.User import User, Student, Instructor
 from models.Course import Course
 from models.Category import Category
 from flask import Blueprint, request
@@ -31,7 +30,11 @@ def register():
     if form.validate_on_submit():
         print(form.password.data)
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        if form.role.data == 'student':
+            user = Student(username=form.username.data, email=form.email.data, password=hashed_password)
+        elif form.role.data == 'instructor':
+            user = Instructor(username=form.username.data, email=form.email.data, password=hashed_password)
+
         session.add(user)
         session.commit()
         print("Registered!")
@@ -75,7 +78,37 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('routes.home'))
+
+@bp.route('/account')
+@login_required
+def account():
+    return render_template('account.html')
+
+@bp.route('/account/edit', methods=['GET', 'POST'])
+@login_required
+def edit_account():
+    form = UserUpdateForm()
+    session = ScopedSession()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        session.commit()
+        print('Your account has been updated!')
+        return redirect(url_for('routes.account'))
+
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
+    return render_template('edit_account.html', form=form)
+
+@bp.route('/account/courses')
+@login_required
+def user_courses():
+    # Assuming that the User model has a relationship to the Course model
+    courses = current_user.courses
+    return render_template('user_courses.html', courses=courses)
 
 @bp.route('/catalog', methods=['GET'])
 def catalog():

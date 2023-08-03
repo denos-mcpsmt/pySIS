@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, FloatField ,TimeField, DateField, BooleanField, TextAreaField, IntegerField, SelectMultipleField
+from wtforms import StringField,SelectField, SubmitField, PasswordField, FloatField ,TimeField, DateField, BooleanField, TextAreaField, IntegerField, SelectMultipleField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 from models.User import User
 from models.Category import Category
@@ -9,6 +9,7 @@ from db import ScopedSession
 
 class RegistrationForm(FlaskForm):
     session = ScopedSession()
+    role = SelectField('Role', choices=[('student','Student'),('instructor','Instructor')])
     username = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -42,6 +43,11 @@ class LoginForm(FlaskForm):
         if user is None:
             print('No user found with that email. Please register first.')
 
+
+class UserUpdateForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Update')
 
 class CourseForm(FlaskForm):
     categories = SelectMultipleField('Categories', coerce=int)

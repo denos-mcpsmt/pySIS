@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Text, Float, Time
+from sqlalchemy import Column, Integer, String, Date, Text, Float, Time, ForeignKey
 from sqlalchemy.orm import relationship
 from db import Base
 from db import get_db_session
@@ -18,4 +18,5 @@ class Course(Base):
     start_time = Column(Time)
     end_time = Column(Time)
     categories = relationship('Category', secondary=course_category_link, back_populates='courses')
+    instructor_id = Column(Integer, ForeignKey('instructor.id'), nullable=False)
     #TO-DO: Validate date and times

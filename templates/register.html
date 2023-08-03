@@ -23,6 +23,10 @@
                   
                   <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Create Your Account</h5>
                     <div class="form-outline mb-4">
+                    {{ form.role.label(class="form-control-label") }}
+                    {{ form.role(class="form-control form-control-lg") }}
+                    </div>
+                    <div class="form-outline mb-4">
                     {{ form.username.label(class="form-control-label") }}
                     {{ form.username(class="form-control form-control-lg") }}
                     </div>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Admin Panel</h1>
+
+<h2>Categories</h2>
+<ul>
+{% for category in categories %}
+    <li>{{ category.name }}</li>
+{% endfor %}
+</ul>
+
+<h2>Courses</h2>
+<ul>
+{% for course in courses %}
+    <li>{{ course.title }}</li>
+{% endfor %}
+</ul>
+
+<h2>Instructors</h2>
+<ul>
+{% for instructor in instructors %}
+    <li>{{ instructor.name }}</li>
+{% endfor %}
+</ul>
+
+<h2>Students</h2>
+<ul>
+{% for student in students %}
+    <li>{{ student.name }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

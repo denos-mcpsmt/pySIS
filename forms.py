@@ -9,7 +9,7 @@ from db import ScopedSession
 
 class RegistrationForm(FlaskForm):
     session = ScopedSession()
-    role = SelectField('Role', choices=[('student','Student'),('instructor','Instructor')])
+    role = SelectField('Role', choices=[('student','Student'),('instructor','Instructor'),('admin','Admin')])
     username = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])

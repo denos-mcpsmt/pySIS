@@ -6,5 +6,9 @@
   <p>Email: {{ current_user.email }}</p>
   
   <a href="{{ url_for('routes.edit_account') }}">Edit details</a>
-  <a href="{{ url_for('routes.user_courses') }}">View my courses</a>
+  {% if current_user.type == 'instructor' %}
+    <a href="{{ url_for('routes.instructor_courses') }}">View Courses I Teach</a>
+  {% elif current_user.type == 'student' %}
+    <a href="{{ url_for('routes.user_courses') }}">View my courses</a>
+  {% endif %}
 {% endblock %}

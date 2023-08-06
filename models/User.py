@@ -1,18 +1,19 @@
-import enum
-
 from sqlalchemy import Column, Enum, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship, backref
-from db import Base
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
-from models.Course import Course
 from models.Enrollments import enrollments
 from models.Teaching import teaching
+from flask_login import UserMixin
+from models.Course import Course
+from db import Base
+import enum
 
 
 class RoleType(enum.Enum):
     STUDENT = "Student"
     INSTRUCTOR = "Instructor"
     ADMIN = "Admin"
+
+
 class User(UserMixin, Base):
     __tablename__ = 'user'
 
@@ -26,6 +27,7 @@ class User(UserMixin, Base):
         'polymorphic_identity': 'user',
         'polymorphic_on': type
     }
+
 
 class Student(User):
     __tablename__ = 'student'
@@ -41,7 +43,6 @@ class Student(User):
     enrolled_courses = relationship("Course", secondary=enrollments, backref=backref('students', lazy='dynamic'))
 
     def enroll_in_class(self, course_id, session):
-
 
         try:
             # Query the course by its ID

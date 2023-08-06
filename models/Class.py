@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
-from db import Base
-from sqlalchemy.orm import relationship
 from models.Enrollments import enrollments
+from sqlalchemy.orm import relationship
+from db import Base
+
 
 class Class(Base):
     __tablename__ = 'classes'

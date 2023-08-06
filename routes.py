@@ -1,27 +1,19 @@
-from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, CourseForm, CategoryForm, UserUpdateForm
-from flask_sqlalchemy import SQLAlchemy
+from flask_login import login_user, login_required, logout_user, current_user
+from flask import Flask, render_template, url_for, flash, redirect
 from models.User import User, Student, Instructor, RoleType
-from models.Course import Course
+from utils.db_utils import get_courses_by_category
 from models.Category import Category
 from flask import Blueprint, request
-from db import ScopedSession
-from datetime import datetime
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user,current_user
+from models.Course import Course
 from flask_bcrypt import Bcrypt
-from utils.db_utils import get_courses_by_category
+from datetime import datetime
+from db import ScopedSession
+from flask import abort
 
-#from main import db, app
-#app = Flask(__name__)
-#app.config['SECRET_KEY'] = b'\xd4\xc5\xf2\xae\xaa\xb7\xc7\xd9}\xf3}\xebHG\xa4\x96'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///school.db'
-#db = SQLAlchemy(app)
-
-bp = Blueprint('routes',__name__)
+bp = Blueprint('routes', __name__)
 bcrypt = Bcrypt()
-#login_manager = LoginManager()
-#login_manager.init_app(app)
-#login_manager.login_view = 'login'
+
 
 @bp.route("/register", methods=['GET', 'POST'])
 def register():
@@ -31,11 +23,14 @@ def register():
         print(form.password.data)
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         if form.role.data == 'student':
-            user = Student(username=form.username.data, email=form.email.data, password=hashed_password, role=RoleType.STUDENT)
+            user = Student(username=form.username.data, email=form.email.data, password=hashed_password,
+                           role=RoleType.STUDENT)
         elif form.role.data == 'instructor':
-            user = Instructor(username=form.username.data, email=form.email.data, password=hashed_password, role=RoleType.INSTRUCTOR)
+            user = Instructor(username=form.username.data, email=form.email.data, password=hashed_password,
+                              role=RoleType.INSTRUCTOR)
         elif form.role.data == 'admin':
-            user = User(username=form.username.data, email=form.email.data, password=hashed_password, role=RoleType.ADMIN)
+            user = User(username=form.username.data, email=form.email.data, password=hashed_password,
+                        role=RoleType.ADMIN)
         session.add(user)
         session.commit()
         print("Registered!")
@@ -46,22 +41,21 @@ def register():
         print(form.errors)
     return render_template('register.html', title='Register', form=form)
 
+
 @bp.route('/home')
 def home():
     if current_user.is_authenticated:
         role = current_user.role.name
-        return render_template('home.html',role=role)
+        return render_template('home.html', role=role)
     else:
         return render_template('home.html')
-
-
 
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     session = ScopedSession()
     form = LoginForm()
-    print("val: "+str(form.validate_on_submit()))
+    print("val: " + str(form.validate_on_submit()))
     if current_user.is_authenticated:
         return redirect(url_for('routes.home'))
     if form.validate_on_submit():
@@ -79,16 +73,19 @@ def login():
         print(form.errors)
     return render_template('login.html', title='Login', form=form)
 
+
 @bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('routes.home'))
 
+
 @bp.route('/account')
 @login_required
 def account():
     return render_template('account.html')
+
 
 @bp.route('/account/edit', methods=['GET', 'POST'])
 @login_required
@@ -108,12 +105,14 @@ def edit_account():
 
     return render_template('edit_account.html', form=form)
 
+
 @bp.route('/account/courses')
 @login_required
 def user_courses():
     # Assuming that the User model has a relationship to the Course model
     courses = current_user.enrolled_courses
     return render_template('user_courses.html', courses=courses)
+
 
 @bp.route('/account/teaching')
 @login_required
@@ -125,6 +124,7 @@ def instructor_courses():
         print(course.name)
     return render_template('user_courses.html', courses=courses)
 
+
 @bp.route('/catalog', methods=['GET'])
 def catalog():
     session = ScopedSession()
@@ -132,7 +132,8 @@ def catalog():
     course_counts = {}
     for category in categories:
         course_counts[category.id] = len(get_courses_by_category(category.id))
-    return render_template('interests.html',categories=categories, course_counts=course_counts)
+    return render_template('interests.html', categories=categories, course_counts=course_counts)
+
 
 @bp.route('/catalog/new', methods=['GET', 'POST'])
 def new_category():
@@ -149,11 +150,12 @@ def new_category():
         return redirect(url_for('routes.catalog'))
     return render_template('new_category.html', title="New Category", form=form)
 
+
 @bp.route('/edit_category/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_category(id):
+def edit_category(category_id):
     session = ScopedSession()
-    category = session.query(Category).filter_by(id=id).first()
+    category = session.query(Category).filter_by(id=category_id).first()
     form = CategoryForm(obj=category)
     if category:
         if form.validate_on_submit():
@@ -175,19 +177,21 @@ def course_detail(course_id):
     name = session.query(User).filter_by(id=instructor.id).first().username
     return render_template('course_detail.html', title=course.name, course=course, instructor_name=name)
 
+
 @bp.route('/courses/<int:category_id>', methods=['GET'])
 def list_courses(category_id):
     session = ScopedSession()
     category = session.query(Category).filter_by(id=category_id).first()
     courses = get_courses_by_category(category_id)
-    return render_template('courses.html',courses=courses,category=category)
+    return render_template('courses.html', courses=courses, category=category)
+
 
 @bp.route('/courses/new', methods=['GET', 'POST'])
 def new_course():
     session = ScopedSession()
     form = CourseForm()
     if request.method == 'POST':
-        new_course = Course(
+        course = Course(
             name=request.form['name'],
             description=request.form['description'],
             price=request.form['price'],
@@ -200,12 +204,13 @@ def new_course():
         )
         for category_id in form.categories.data:
             category = session.query(Category).filter_by(id=category_id).first()
-            new_course.categories.append(category)
+            course.categories.append(category)
         cat_id = form.categories.data[0]
-        session.add(new_course)
+        session.add(course)
         session.commit()
         return redirect(url_for('routes.list_courses', category_id=cat_id))
     return render_template('new_course.html', title="New Course", form=form)
+
 
 @bp.route('/course/enroll/<int:course_id>')
 @login_required
@@ -228,7 +233,7 @@ def enroll(course_id):
 @login_required
 def admin():
     if current_user.role != RoleType.ADMIN:
-        Flask.abort(403)  # Forbidden, not an admin
+        abort(403)  # Forbidden, not an admin
 
     session = ScopedSession()
     categories = session.query(Category).all()

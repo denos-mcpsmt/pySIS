@@ -114,6 +114,7 @@ def user_courses():
     return render_template('user_courses.html', courses=courses)
 
 
+
 @bp.route('/account/teaching')
 @login_required
 def instructor_courses():
